@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<books>
+	<book>
+		<title>Of Mice And Men</title>
+		<author>John Steinbeck</author>
+		<pageCount>187</pageCount>
+		<publishers>
+			<publisher>
+				<isbn>978-88-58702-15-4</isbn>
+				<name>Pascal Covici</name>
+				<year>1937</year>
+				<binding>Hardcover</binding>
+				<first>true</first>
+			</publisher>
+			<publisher>
+				<isbn>978-05-82461-46-8</isbn>
+				<name>Longman</name>
+				<year>2009</year>
+				<binding>Hardcover</binding>
+			</publisher>
+		</publishers>
+		<characters>
+			<character name="Lennie Small" />
+			<character name="Curley's Wife" />
+			<character name="George Milton" />
+			<character name="Curley" />
+		</characters>
+		<film>True</film>
+	</book>
+	<book>
+		<title>The Hunt for Red October</title>
+		<author>Tom Clancy</author>
+		<pageCount>387</pageCount>
+		<publishers>
+			<publisher>
+				<isbn>978-08-70212-85-7</isbn>
+				<name>Naval Institute Press</name>
+				<year>1984</year>
+				<binding>Hardcover</binding>
+				<first>true</first>
+			</publisher>
+			<publisher>
+				<isbn>978-04-25083-83-3</isbn>
+				<name>Berkley</name>
+				<year>1986</year>
+				<binding>Paperback</binding>
+			</publisher>
+			<publisher>
+				<isbn>978-08-08587-35-4</isbn>
+				<name>Penguin Putnam</name>
+				<year>2010</year>
+				<binding>Paperback</binding>
+			</publisher>
+		</publishers>
+		<characters>
+			<character name="Marko Alexadrovich Ramius" />
+			<character name="Jack Ryan" />
+			<character name="Admiral Greer" />
+			<character name="Bart Mancuso" />
+			<character name="Vasily Borodin" />
+		</characters>
+		<film>True</film>
+	</book>
+</books>

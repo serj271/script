@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type='text/xsl' href='style.xsl'?>
+<Root>
+ <Object>
+  <Property1>Value 1</Property1>
+  <Property2>Value 2</Property2>
+  <SubObject>
+   <Property3>Value 3</Property3>
+  </SubObject>
+ </Object>
+</Root>
