@@ -1,4 +1,4 @@
-$User = $env:UserName
+﻿$User = $env:UserName
 $FileName = "signature"
 $FileExtension = "htm","rtf","txt"
 $Path = "C:\Users\Public\Downloads"
@@ -20,7 +20,10 @@ If(!(test-path $PathSignatureTemplates)){
     New-Item -Path "$PathSignatureTemplates" -ItemType Directory
 }
 #New-Item -Path "$PathSignatureTemplates" -ItemType Directory
-
+# create directory signature
+If(!(test-path $AppSignatures)){
+    New-Item -Path "$AppSignatures" -ItemType Directory
+}
 
 #New-SmbShare -Name "DSCSMB" -Path "C:\DSCSMB" -ReadAccess Everyone  -FullAccess Administrator -Description "Smb share"
 #Get-ChildItem "$Path" -Recurse  -Force| Remove-Item
@@ -32,33 +35,45 @@ If(!(test-path $PathSignatureTemplates)){
 #$pwd.Path
 foreach ($Ext in $FileExtension)
 {
-    Copy-Item -Force "C:\script\OutlookSignature\Templates\$FileName.$Ext" "$PathSignatureUser\$FileName.$Ext"
+    Copy-Item -Force "OutlookSignature\Templates\$FileName.$Ext" "$PathSignatureUser\$FileName.$Ext"
 }
-$newObject = New-Object -TypeName PSObject -Property @{
-    Description = $env:username
-    title = 'title'
-    Company = $null
-    STREETADDRESS = 'StreetAddress'
-    POSTALCODE = 'POSTALCODE'
-    CITY = 'Chelyabinsk'
-    OFFICEPHONE = '12519'
-    EMAIL = 'u0010345@che.mrsk-ural.ru'
-    WEBSITE =  $null
+
+$objDomain = New-Object System.DirectoryServices.DirectoryEntry
+$objSearcher = New-Object System.DirectoryServices.DirectorySearcher
+$objSearcher.SearchRoot = $objDomain
+
+$objSearcher.Filter =("(&(objectclass=user)(objectcategory=person)(useraccountcontrol:1.2.840.113556.1.4.803:=512)(samaccountname=$env:username))")
+$objSearcher.PropertiesToLoad.Add("displayName")
+$objSearcher.PropertiesToLoad.Add("sAMAccountName")
+$objSearcher.PropertiesToLoad.Add("telephoneNumber");
+$objSearcher.PropertiesToLoad.Add("streetAddress");
+$objSearcher.PropertiesToLoad.Add("sAMAccountType");
+$objSearcher.PropertiesToLoad.Add("company");
+$objSearcher.PropertiesToLoad.Add("description");
+$objSearcher.PropertiesToLoad.Add("mail");
+ $item = $objSearcher.FindOne()
+
+
+<#$newObject = New-Object -TypeName PSObject -Property @{
+    displayname = $env:username
+    description = 'description'            
+    company = $null
+    streetAddress = 'streetAddress'
+    telephoneNumber = '12519'
+    mail = 'u0010345@che.mrsk-ural.ru']]
 
 }
+#>
 foreach ($Ext in $FileExtension)
 {
     (Get-Content "$PathSignatureUser\$FileName.$Ext") | Foreach-Object {
     $_`
-    -replace "@NAME", $newObject.Description `
-    -replace "@DESCRIPTION", $newObject.title `
-    -replace "@COMPANY", $newObject.Company `
-    -replace "@STREETADDRESS", $newObject.StreetAddress `
-    -replace "@POSTALCODE", $newObject.PostalCode `
-    -replace "@CITY", $newObject.City `
-    -replace "@OFFICEPHONE", $newObject.OfficePhone `
-    -replace "@EMAIL", $newObject.Mail `
-    -replace "@WEBSITE", $newObject.Homepage `
+    -replace "@NAME", $item.Properties['displayname'] `
+    -replace "@DESCRIPTION", $item.Properties['description'] `
+    -replace "@COMPANY",$item.Properties['company'] `
+    -replace "@STREETADDRESS",$item.Properties['streetAddress'] `
+    -replace "@OFFICEPHONE", $item.Properties['telephoneNumber']`
+    -replace "@EMAIL", $item.Properties['mail'] `
     } | Set-Content "$PathSignatureUser\$FileName.$Ext"
 }
 #copy FileName
@@ -92,12 +107,13 @@ $_`
 Remove-ItemProperty -Path HKCU:\Software\Microsoft\Office\14.0\Outlook\Setup -Name First-Run -Force -ErrorAction SilentlyContinue -Verbose
 New-ItemProperty HKCU:'\Software\Microsoft\Office\14.0\Common\MailSettings' -Name 'ReplySignature' -Value $User -PropertyType 'String' -Force
 New-ItemProperty HKCU:'\Software\Microsoft\Office\14.0\Common\MailSettings' -Name 'NewSignature' -Value $User -PropertyType 'String' -Force
-}
-#Office 2013
-If (Test-Path HKCU:'\Software\Microsoft\Office\15.0') {
-Remove-ItemProperty -Path HKCU:\Software\Microsoft\Office\15.0\Outlook\Setup -Name First-Run -Force -ErrorAction SilentlyContinue -Verbose
-New-ItemProperty HKCU:'\Software\Microsoft\Office\15.0\Common\MailSettings' -Name 'ReplySignature' -Value $User -PropertyType 'String' -Force
-New-ItemProperty HKCU:'\Software\Microsoft\Office\15.0\Common\MailSettings' -Name 'NewSignature' -Value $User -PropertyType 'String' -Force
+}#>
+
+#Office 2016
+<#If (Test-Path HKCU:'\Software\Microsoft\Office\16.0') {
+Remove-ItemProperty -Path HKCU:\Software\Microsoft\Office\16.0\Outlook\Setup -Name First-Run -Force -ErrorAction SilentlyContinue -Verbose
+New-ItemProperty HKCU:'\Software\Microsoft\Office\16.0\Common\MailSettings' -Name 'ReplySignature' -Value $User -PropertyType 'String' -Force
+New-ItemProperty HKCU:'\Software\Microsoft\Office\16.0\Common\MailSettings' -Name 'NewSignature' -Value $User -PropertyType 'String' -Force
 }
 #>
 
